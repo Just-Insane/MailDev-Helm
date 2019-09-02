@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "maildev-helm.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "maildev-helm.name" . }}
+    helm.sh/chart: {{ include "maildev-helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.serviceweb.type }}
+  ports:
+    - name: {{ .Values.project }}-web
+      port: {{ .Values.serviceweb.port }}
+      targetPort: http
+      protocol: TCP
+    - name: {{ .Values.project }}-tcp
+      port: {{ .Values.servicetcp.port }}
+      targetPort: 25
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "maildev-helm.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
